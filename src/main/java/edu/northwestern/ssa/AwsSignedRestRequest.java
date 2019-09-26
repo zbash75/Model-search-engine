@@ -12,6 +12,10 @@ import software.amazon.awssdk.utils.StringInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 
+/** based on sample code at:
+ * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-request-signing.html
+ * https://github.com/aws/aws-sdk-java-v2/issues/339
+ */
 public class AwsSignedRestRequest implements Closeable {
     private Aws4SignerParams params;
     private Aws4Signer signer = Aws4Signer.create();
