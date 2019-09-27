@@ -1,4 +1,4 @@
-package com.stevetarzia.ssa;
+package edu.northwestern.ssa;
 
 import org.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
