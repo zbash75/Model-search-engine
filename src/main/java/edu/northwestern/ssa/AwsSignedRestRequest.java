@@ -11,6 +11,8 @@ import software.amazon.awssdk.utils.StringInputStream;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 
 /** based on sample code at:
  * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-request-signing.html
@@ -31,14 +33,17 @@ public class AwsSignedRestRequest implements Closeable {
     }
 
     /** @param path should not have a leading "/" */
-    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path)
+    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
+                                              Optional<Map<String, String>> queryParameters)
             throws IOException {
-        return restRequest(method, host, path, null);
+        return restRequest(method, host, path, queryParameters, Optional.empty());
     }
 
-    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path, JSONObject body)
+    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
+                                              Optional<Map<String, String>> queryParameters,
+                                              Optional<JSONObject> body)
             throws IOException {
-        if (method.equals(SdkHttpMethod.GET) && body != null) {
+        if (method.equals(SdkHttpMethod.GET) && body.isPresent()) {
             throw new IOException("GET request cannot have a body. Otherwise Aws4Signer will include the body in the " +
                     "signature calculation, but it will not be included in the request, leading to a 403 error back from AWS.");
         }
@@ -47,10 +52,13 @@ public class AwsSignedRestRequest implements Closeable {
                 .host(host)
                 .method(method)
                 .protocol("https");
-        if (body != null) {
+        body.ifPresent(realBody -> {
             b.putHeader("Content-Type", "application/json; charset=utf-8");
-            b.contentStreamProvider(() -> new StringInputStream(body.toString()));
-        }
+            b.contentStreamProvider(() -> new StringInputStream(realBody.toString()));
+        });
+        queryParameters.ifPresent(qp -> {
+            qp.forEach((key, value) -> b.putRawQueryParameter(key, value));
+        });
         SdkHttpFullRequest request = b.build();
 
         // now sign it
