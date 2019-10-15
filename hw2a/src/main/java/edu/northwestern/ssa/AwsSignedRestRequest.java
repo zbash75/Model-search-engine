@@ -1,7 +1,7 @@
 package edu.northwestern.ssa;
 
 import org.json.JSONObject;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.signer.Aws4Signer;
 import software.amazon.awssdk.auth.signer.params.Aws4SignerParams;
 import software.amazon.awssdk.http.*;
@@ -25,8 +25,10 @@ public class AwsSignedRestRequest implements Closeable {
 
     /** @param serviceName would be "es" for Elasticsearch */
     AwsSignedRestRequest(String serviceName) {
-         params = Aws4SignerParams.builder()
-                .awsCredentials(DefaultCredentialsProvider.create().resolveCredentials())
+        params = Aws4SignerParams.builder()
+                .awsCredentials(AwsBasicCredentials.create(
+                        Config.getParam("AWS_ACCESS_KEY_ID"),
+                        Config.getParam("AWS_SECRET_ACCESS_KEY")))
                 .signingName(serviceName)
                 .signingRegion(Region.US_EAST_2)
                 .build();
