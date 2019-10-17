@@ -24,7 +24,7 @@ public class AwsSignedRestRequest implements Closeable {
     private SdkHttpClient httpClient = ApacheHttpClient.builder().build();
 
     /** @param serviceName would be "es" for Elasticsearch */
-    AwsSignedRestRequest(String serviceName) {
+    public AwsSignedRestRequest(String serviceName) {
         params = Aws4SignerParams.builder()
                 .awsCredentials(AwsBasicCredentials.create(
                         Config.getParam("AWS_ACCESS_KEY_ID"),
@@ -35,13 +35,13 @@ public class AwsSignedRestRequest implements Closeable {
     }
 
     /** @param path should not have a leading "/" */
-    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
+    public HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
                                               Optional<Map<String, String>> queryParameters)
             throws IOException {
         return restRequest(method, host, path, queryParameters, Optional.empty());
     }
 
-    protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
+    public HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
                                               Optional<Map<String, String>> queryParameters,
                                               Optional<JSONObject> body)
             throws IOException {
