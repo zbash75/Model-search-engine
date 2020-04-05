@@ -69,7 +69,7 @@
       <dependency>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>bom</artifactId>
-        <version>2.7.36</version>
+        <version>2.11.9</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -77,7 +77,7 @@
   </dependencyManagement>
 
   <build>
-    <!-- include source code in jar file.  Don't change this! -->
+    <!-- include source code in jar file, for grading.  Don't change this! -->
     <resources>
       <resource>
         <directory>src/main/java</directory>
