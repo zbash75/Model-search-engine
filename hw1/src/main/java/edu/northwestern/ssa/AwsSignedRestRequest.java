@@ -32,7 +32,12 @@ public class AwsSignedRestRequest implements Closeable {
                 .build();
     }
 
-    /** @param path should not have a leading "/" */
+    /** Note that the HttpExecuteResponse must be consumed, otherwise the connection will
+        never be freed and after 50 requests you will get an error saying
+        "Timeout waiting for connection from pool".
+        You can consume it with HttpExecuteResponse.responseBody().get().close()
+
+        @param path should not have a leading "/" */
     protected HttpExecuteResponse restRequest(SdkHttpMethod method, String host, String path,
                                               Optional<Map<String, String>> queryParameters)
             throws IOException {
